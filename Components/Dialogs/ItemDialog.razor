@@ -1,0 +1,105 @@
+﻿@using Shopping.Data;
+@using Shopping.Data.Entities;
+@using Shopping.Data.Repos;
+
+<MudDialog >
+    <DialogContent>
+        <MudGrid >
+            <MudItem xs="4">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Cancel" >Cancel</MudButton>
+            </MudItem>
+            <MudItem xs="4">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(async () => await Save())">Save</MudButton>
+            </MudItem>
+            <MudItem xs="4">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(async () => await Delete())" >Delete</MudButton>
+            </MudItem>
+        </MudGrid>
+        <MudForm Model="@Item" @ref="@form" Validation="@(validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid Class="mb-2" >
+                <MudItem xs="12">
+                    <MudTextField Label="Item Name" @bind-Value=Item.Name For="@(() => Item.Name)" Margin="Margin.Dense" Required="true" MaxLength="25" Class="pa-0" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudNumericField Label="Quantity" @bind-Value=Item.Quantity For="@(() => Item.Quantity)" Margin="Margin.Dense" Class="pa-0" Min="1" />
+                </MudItem>
+                <MudItem xs="11" Class="pa-0">
+                    <MudSelect @ref="@AisleField" T="int" Label="Aisle" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter" @bind-Value=Item.AisleId
+                               Dense="true" Margin="Margin.Dense" Class="ps-3" >
+                        @foreach(Aisle ailse in Aisles)
+                        {
+                            <MudSelectItem Value="@(ailse.AisleId)">@ailse.AisleName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="1" Class="pa-0">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="AisleClicked" Class="ps-1 pe-2 pt-4" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public int SavedItemId { get; set; }
+
+    [Inject] internal IItemRepository ItemRepo { get; set; }
+
+    [Inject] internal IAisleRepository AisleRepo { get; set; }
+
+    [Inject] public IDialogService DialogService { get; set; }
+
+    private Item Item { get; set; } = new();
+
+    private readonly ItemValidator validator = new();
+
+    private MudForm form;
+
+    private MudSelect<int> AisleField;
+
+    private List<Aisle> Aisles { get; set; } = [];
+
+    public void Cancel() => MudDialog.Cancel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        MudDialog.Options.NoHeader = true;
+        MudDialog.SetOptions(MudDialog.Options);
+
+        Aisles = (await AisleRepo.GetAisles()).ToList();
+        Item = await ItemRepo.GetItem(SavedItemId);
+    }
+
+    private async Task Save()
+    {
+        await form.Validate();
+
+        if (!form.IsValid) return;
+
+        await ItemRepo.UpdateItem(Item);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task Delete()
+    {
+        await ItemRepo.DeleteItem(SavedItemId);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task AisleClicked()
+    {
+        int aisleId = Item.AisleId == -1 ? 0 : Item.AisleId;
+
+        var dialog = DialogService.Show<AisleDialog>("", new DialogParameters<AisleDialog> { { x => x.SavedAisleId, aisleId } });
+        var result = await dialog.Result;
+        if (!result.Canceled && Item.AisleId != (int)result.Data)
+        {
+            Aisles = (await AisleRepo.GetAisles()).ToList();
+            Item.AisleId = (int)result.Data;
+            await ItemRepo.UpdateItem(Item);
+            await AisleField.SelectOption(Item.AisleId);
+        }
+    }
+}

@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
+using Shopping.Data;
+using Shopping.Services;
 
 namespace Shopping
 {
@@ -16,8 +19,14 @@ namespace Shopping
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddMudServices();
+
+            builder.Services.AddDbContextFactory<ShoppingDbContext>();
+
+            builder.Services.AddShoppingServices();
+
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
 

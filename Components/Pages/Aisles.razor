@@ -1,0 +1,90 @@
+﻿@page "/aisles"
+@using Shopping.Data;
+@using Shopping.Data.Entities;
+@using Shopping.Data.Repos;
+@using Shopping.Components.Dialogs;
+@using Shopping.Components.Layout;
+@using Shopping.Services;
+@using BlazorSortableList;
+
+<AppBar CentreText="Aisles" BackPage="true" />
+
+<SortableList Id="sortable" Items="AisleList" OnUpdate="@SortList" Context="Aisle">
+    <SortableItemTemplate>
+        <MudListItem @ondblclick="@(() => Edit(Aisle.AisleId))" Style="@($"background:{Colors.Teal.Lighten4};")" Class="my-1 pa-0" >
+            <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Row="true" >
+                <MudIcon Icon="@Icons.Material.Outlined.DragIndicator" Color="Color.Default" Size="Size.Large" Class="py-0 my-0" />
+                <MudText Typo="Typo.subtitle1">@($"{Aisle.AisleName} ({Aisle.Order})")</MudText>
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="py-0 pe-8 my-0" OnClick="@(() => Delete(Aisle.AisleId, Aisle.AisleName))" Size="Size.Large" />
+            </MudStack>
+        </MudListItem>
+    </SortableItemTemplate>
+</SortableList>
+
+<MudFab StartIcon="@Icons.Material.Filled.Add" OnClick="NewAisle" Color="Color.Success" Size="Size.Small" Class="absolute z-10 " Style="right:46%; bottom:-30px;" />
+
+@code
+{
+    [Inject] internal IAisleRepository AisleRepo { get; set; }
+
+    [Inject] internal IItemRepository ItemRepo { get; set; }
+
+    [Inject] public IDialogService DialogService { get; set; }
+
+    [Inject] internal IMauiDialogSvc MauiDialogSvc { get; set; }
+
+    List<Aisle> AisleList { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAisles();
+    }
+
+    private async Task LoadAisles()
+    {
+        AisleList = (await AisleRepo.GetAisles()).Where(a => a.AisleId != -1).ToList();
+    }
+
+    private async Task SortList((int oldIndex, int newIndex) indices)
+    {
+        var (oldIndex, newIndex) = indices;
+
+        var aisle = AisleList[oldIndex];
+        AisleList.RemoveAt(oldIndex);
+        AisleList.Insert(newIndex, aisle);
+
+        AisleList = AisleList.Select((aisle, i) => new Aisle { AisleId = aisle.AisleId, Order = i, AisleName = aisle.AisleName }).ToList();
+        await AisleRepo.UpdateAisles(AisleList);
+    }
+
+    private async Task NewAisle()
+    {
+        var dialog = DialogService.Show<AisleDialog>("", new DialogParameters<AisleDialog> { { x => x.SavedAisleId, 0 } });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadAisles();
+        }
+    }
+
+    private async Task Delete(int aisleId, string aisleName)
+    {
+        if (await MauiDialogSvc.Confirm(null, $"Delete \"{aisleName}\"?", "Yes", "No"))
+        {
+            await AisleRepo.DeleteAisle(aisleId);
+            await ItemRepo.UnsetAisle(aisleId);
+            await LoadAisles();
+        }
+    }
+
+    private async Task Edit(int aisleId)
+    {
+        var dialog = DialogService.Show<AisleDialog>("", new DialogParameters<AisleDialog> { { x => x.SavedAisleId, aisleId } });
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadAisles();
+        }
+    }
+}
