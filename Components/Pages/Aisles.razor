@@ -5,22 +5,35 @@
 @using Shopping.Components.Dialogs;
 @using Shopping.Components.Layout;
 @using Shopping.Services;
-@using BlazorSortableList;
 
-<AppBar CentreText="Aisles" BackPage="true" />
-
-<SortableList Id="sortable" Items="AisleList" OnUpdate="@SortList" Context="Aisle">
-    <SortableItemTemplate>
-        <MudListItem @ondblclick="@(() => Edit(Aisle.AisleId))" Style="@($"background:{Colors.Teal.Lighten4};")" Class="my-1 pa-0" >
-            <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Row="true" >
-                <MudIcon Icon="@Icons.Material.Outlined.DragIndicator" Color="Color.Default" Size="Size.Large" Class="py-0 my-0" />
-                <MudText Typo="Typo.subtitle1">@($"{Aisle.AisleName} ({Aisle.Order})")</MudText>
-                <MudSpacer />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="py-0 pe-8 my-0" OnClick="@(() => Delete(Aisle.AisleId, Aisle.AisleName))" Size="Size.Large" />
-            </MudStack>
-        </MudListItem>
-    </SortableItemTemplate>
-</SortableList>
+@foreach (Aisle aisle in AisleList)
+{
+    <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten4};")" Class="my-2">
+        <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Row="true" >
+            <MudText Class="ps-4" Typo="Typo.subtitle1">@aisle.AisleName (@aisle.Order)</MudText>
+            <MudSpacer />
+            <MudButtonGroup Color="Color.Primary" Variant="Variant.Text" Size="Size.Small" Class="me-6">
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(aisle))" Class="px-1" />
+                @if (aisle.Order == 1)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" OnClick="@(() => MoveUp(aisle))" Class="px-1 invisible" />
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" OnClick="@(() => MoveUp(aisle))" Class="px-1" />
+                }
+                @if (aisle.Order == AisleList.Max(a => a.Order))
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" OnClick="@(() => MoveDown(aisle))" Class="px-1 invisible" />
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" OnClick="@(() => MoveDown(aisle))" Class="px-1" />
+                }
+            </MudButtonGroup>
+        </MudStack>
+    </MudPaper>
+}
 
 <MudFab StartIcon="@Icons.Material.Filled.Add" OnClick="NewAisle" Color="Color.Success" Size="Size.Small" Class="absolute z-10 " Style="right:46%; bottom:-30px;" />
 
@@ -46,45 +59,72 @@
         AisleList = (await AisleRepo.GetAisles()).Where(a => a.AisleId != -1).ToList();
     }
 
-    private async Task SortList((int oldIndex, int newIndex) indices)
+    private async Task MoveUp(Aisle aisle)
     {
-        var (oldIndex, newIndex) = indices;
+        var swapAisle = AisleList.FirstOrDefault(a => a.Order == aisle.Order - 1);
+        if (swapAisle != null) swapAisle.Order++;
+        aisle.Order--;
 
-        var aisle = AisleList[oldIndex];
-        AisleList.RemoveAt(oldIndex);
-        AisleList.Insert(newIndex, aisle);
-
-        AisleList = AisleList.Select((aisle, i) => new Aisle { AisleId = aisle.AisleId, Order = i, AisleName = aisle.AisleName }).ToList();
         await AisleRepo.UpdateAisles(AisleList);
+        await LoadAisles();
+    }
+
+    private async Task MoveDown(Aisle aisle)
+    {
+        var swapAisle = AisleList.FirstOrDefault(a => a.Order == aisle.Order + 1);
+        if (swapAisle != null) swapAisle.Order--;
+        aisle.Order++;
+
+        await AisleRepo.UpdateAisles(AisleList);
+        await LoadAisles();
     }
 
     private async Task NewAisle()
     {
-        var dialog = DialogService.Show<AisleDialog>("", new DialogParameters<AisleDialog> { { x => x.SavedAisleId, 0 } });
-        var result = await dialog.Result;
-        if (!result.Canceled)
+        string aisleName = await MauiDialogSvc.EditAisle("New Aisle", null);
+        if (string.IsNullOrEmpty(aisleName)) return;
+        if (!(await AisleNameUnique(aisleName))) return;
+
+        Aisle newAisle = new();
+        newAisle.AisleName = aisleName;
+        newAisle.Order = AisleList.Max(a => a.Order) + 1;
+
+        await AisleRepo.AddAisle(newAisle);
+        await LoadAisles();
+    }
+
+    private async Task<bool> AisleNameUnique(string aisleName)
+    {
+        var aisleNames = AisleList.Select(a => a.AisleName.ToLower()).ToList();
+
+        aisleNames.Add(aisleName.ToLower());
+        if (aisleNames.Count() != aisleNames.Distinct().Count())
         {
+            await MauiDialogSvc.Alert("Aisle exists");
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task Delete(Aisle aisle)
+    {
+        if (await MauiDialogSvc.Confirm($"Delete \"{aisle.AisleName}\"?", null, "Yes", "No"))
+        {
+            await AisleRepo.DeleteAisle(aisle.AisleId);
+            await ItemRepo.UnsetAisle(aisle.AisleId);
             await LoadAisles();
         }
     }
 
-    private async Task Delete(int aisleId, string aisleName)
+    private async Task Edit(Aisle aisle)
     {
-        if (await MauiDialogSvc.Confirm(null, $"Delete \"{aisleName}\"?", "Yes", "No"))
-        {
-            await AisleRepo.DeleteAisle(aisleId);
-            await ItemRepo.UnsetAisle(aisleId);
-            await LoadAisles();
-        }
-    }
+        string aisleName = await MauiDialogSvc.EditAisle("Edit Aisle", aisle.AisleName);
+        if (string.IsNullOrEmpty(aisleName) || aisle.AisleName.ToLower() == aisleName.ToLower()) return;
+        if (!(await AisleNameUnique(aisleName))) return;
 
-    private async Task Edit(int aisleId)
-    {
-        var dialog = DialogService.Show<AisleDialog>("", new DialogParameters<AisleDialog> { { x => x.SavedAisleId, aisleId } });
-        var result = await dialog.Result;
-        if (!result.Canceled)
-        {
-            await LoadAisles();
-        }
+        aisle.AisleName = aisleName;
+        await AisleRepo.UpdateAisle(aisle);
+        await LoadAisles();
     }
 }

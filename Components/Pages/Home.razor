@@ -5,23 +5,21 @@
 @using Shopping.Components.Dialogs;
 @using Shopping.Components.Layout;
 
-<AppBar CentreText="Shopping List" ShowAisles="true" />
-
 <MudForm Model="@NewItem" @ref="@NewItemForm" Validation="@(validator.ValidateValue)" ValidationDelay="0">
-    <MudPaper Elevation="5" >
+    <MudPaper Elevation="5" Class="mt-4" >
         <MudTextField Variant="Variant.Outlined" Label="New Item" @bind-Value=NewItem.Name For="@(() => NewItem.Name)" 
-            Margin="Margin.Dense" MaxLength="25" Class="pa-0 mt-0 mb-2" OnlyValidateIfDirty="true" 
-            Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Check" OnAdornmentClick="CreateItem" 
-            AdornmentColor="Color.Primary" @ref="@NewItemField" />
+            MaxLength="25" Class="pa-0 mt-0 mb-2" OnlyValidateIfDirty="true" Adornment="Adornment.End" 
+            AdornmentIcon="@Icons.Material.Filled.Check" OnAdornmentClick="CreateItem"
+            AdornmentColor="@Color.Primary" @ref="@NewItemField" Margin="Margin.Dense" />
     </MudPaper>
 </MudForm>
 
 @foreach (var item in ListedItems)
 {
-    <MudPaper Class="d-flex my-1 px-2" Style="@($"background:{Colors.LightBlue.Lighten5}")" @ondblclick="@(() => EditItem(item))" >
+    <MudPaper Class="d-flex my-1 px-2" Style="@($"color:{Colors.Shades.Black}; background:{Colors.LightBlue.Lighten5}")" @ondblclick="@(() => EditItem(item))">
         <MudCheckBox T="bool" Label="@item.Label" LabelPosition="LabelPosition.Start" Value="@item.Listed" 
             ValueChanged="@(l => ListedChanged(l, item))" Class="py-0 px-2" Size="Size.Large" Dense="true" 
-            Color="Color.Default" CheckedIcon="@Icons.Material.Outlined.CheckBox" />
+            Color="Color.Dark" CheckedIcon="@Icons.Material.Outlined.CheckBox" />
     </MudPaper>
 }
 
@@ -95,7 +93,8 @@
 
     async Task EditItem(Item item)
     {
-        var dialog = DialogService.Show<ItemDialog>("", new DialogParameters<ItemDialog> { { x => x.SavedItemId, item.ItemId } });
+        var options = new DialogOptions { Position = DialogPosition.Custom };
+        var dialog = DialogService.Show<ItemDialog>("", new DialogParameters<ItemDialog> { { x => x.SavedItemId, item.ItemId } }, options);
         var result = await dialog.Result;
         if (!result.Canceled) await LoadLists();
     }

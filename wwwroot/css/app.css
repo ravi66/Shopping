@@ -84,3 +84,12 @@ h1:focus {
         padding-left: env(safe-area-inset-left);
     }
 }
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+*:not(input) {
+    user-select: none;
+    -webkit-user-select: none;
+}

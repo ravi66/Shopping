@@ -14,6 +14,7 @@ namespace Shopping.Data.Repos
                 .Select(i => new Item
                 {
                     ItemId = i.ItemId,
+                    AisleId =i.AisleId,
                     Listed = i.Listed,
                     Name = i.Name,
                     Label = i.Quantity > 1 ? $"{i.Name} ({i.Quantity})" : i.Name,
@@ -33,6 +34,7 @@ namespace Shopping.Data.Repos
                 .Select(i => new Item
                 {
                     ItemId = i.ItemId,
+                    AisleId =i.AisleId,
                     Name = i.Name,
                     Listed = i.Listed,
                     Label = i.Quantity > 1 ? $"{i.Name} ({i.Quantity})" : i.Name,

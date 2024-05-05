@@ -72,7 +72,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="BlazorSortableList" Version="2.0.0" />
         <PackageReference Include="FluentValidation" Version="11.9.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4" />
