@@ -6,11 +6,15 @@
 @using Shopping.Components.Layout;
 @using Shopping.Services;
 
+<MudPaper Elevation="5" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten4};")" Class="my-2">
+    <MudText Typo="Typo.h5" Align="Align.Center" >Aisles</MudText>
+</MudPaper>
+
 @foreach (Aisle aisle in AisleList)
 {
-    <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten4};")" Class="my-2">
+    <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten5};")" Class="my-2">
         <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Row="true" >
-            <MudText Class="ps-4" Typo="Typo.subtitle1">@aisle.AisleName (@aisle.Order)</MudText>
+            <MudText Class="ps-2" Typo="Typo.subtitle1">@aisle.AisleName</MudText>
             <MudSpacer />
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Text" Size="Size.Small" Class="me-6">
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => Delete(aisle))" Class="px-1" />
