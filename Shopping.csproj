@@ -72,6 +72,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Components\SortableList.razor.js" />
+      <None Remove="Ravi Kamat.keystore" />
       <None Remove="Resources\AppIcon\appicon.svg" />
     </ItemGroup>
 
