@@ -5,7 +5,10 @@
 @using Shopping.Services
 
 <MudPaper Elevation="5" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten4};")" Class="my-2">
-    <MudText Typo="Typo.h5" Align="Align.Center">Aisles</MudText>
+    <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Row="true" >
+        <MudIcon Icon="@Icons.Material.Filled.LocalGroceryStore" Color="Color.Inherit" />
+        <MudText Typo="Typo.h5" Align="Align.Center">Aisles</MudText>
+    </MudStack>
 </MudPaper>
 
 <SortableList Id="sortable1" Items="AisleList" OnUpdate="@SortList" Context="aisle" Handle=".drag-handle">
