@@ -56,7 +56,6 @@
 
     protected async override Task OnInitializedAsync()
     {
-        //await DbUtils.EnsureDbDeleted();
         await DbUtils.EnsureDbCreated();
         await LoadLists();
     }

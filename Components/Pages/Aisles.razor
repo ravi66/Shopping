@@ -8,14 +8,15 @@
     <MudText Typo="Typo.h5" Align="Align.Center">Aisles</MudText>
 </MudPaper>
 
-<SortableList Id="sortable1" Items="AisleList" OnUpdate="@SortList" Context="aisle">
+<SortableList Id="sortable1" Items="AisleList" OnUpdate="@SortList" Context="aisle" Handle=".drag-handle">
     <SortableItemTemplate>
         <div>
             <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten5};")" Class="my-2">
                 <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Row="true" >
-                    <MudText Class="ps-2" Typo="Typo.subtitle1">@aisle.AisleName</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.DragIndicator" Class="drag-handle" Color="Color.Dark" Size="Size.Large"/>
+                    <MudText Typo="Typo.subtitle1" >@aisle.AisleName</MudText>
                     <MudSpacer />
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Text" Size="Size.Small" Class="me-6" OnClick="@(() => Delete(aisle))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Text" @onpointerdown="@(() => Delete(aisle))" Class="me-4" />
                 </MudStack>
             </MudPaper>
         </div>
