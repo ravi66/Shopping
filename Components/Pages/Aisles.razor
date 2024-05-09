@@ -1,8 +1,4 @@
 ﻿@page "/aisles"
-@using Shopping.Components
-@using Shopping.Data.Entities
-@using Shopping.Data.Repos
-@using Shopping.Services
 
 <MudPaper Elevation="5" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten4};")" Class="my-2">
     <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Row="true" >
@@ -115,7 +111,7 @@
 
         Aisle newAisle = new();
         newAisle.AisleName = aisleName;
-        newAisle.Order = AisleList.Max(a => a.Order) + 1;
+        newAisle.Order = AisleList.Count > 0 ? AisleList.Max(a => a.Order) + 1 : 1;
 
         await AisleRepo.AddAisle(newAisle);
         await LoadAisles();

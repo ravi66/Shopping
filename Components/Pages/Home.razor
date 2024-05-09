@@ -1,12 +1,9 @@
 ﻿@page "/"
 @using Shopping.Data;
-@using Shopping.Data.Entities;
-@using Shopping.Data.Repos;
 @using Shopping.Components.Dialogs;
-@using Shopping.Components.Layout;
 
 <MudForm Model="@NewItem" @ref="@NewItemForm" Validation="@(validator.ValidateValue)" ValidationDelay="0">
-    <MudPaper Elevation="5" Class="mt-4" >
+    <MudPaper Elevation="5" Class="mt-2" >
         <MudTextField Variant="Variant.Outlined" Label="New Item" @bind-Value=NewItem.Name For="@(() => NewItem.Name)" 
             MaxLength="25" Class="pa-0 mt-0 mb-2" OnlyValidateIfDirty="true" Adornment="Adornment.End" 
             AdornmentIcon="@Icons.Material.Filled.Check" OnAdornmentClick="CreateItem"
@@ -16,22 +13,22 @@
 
 @foreach (var item in ListedItems)
 {
-    <MudPaper Class="d-flex my-1 px-2" Style="@($"color:{Colors.Shades.Black}; background:{Colors.LightBlue.Lighten5}")" @ondblclick="@(() => EditItem(item))">
-        <MudCheckBox T="bool" Label="@item.Label" LabelPosition="LabelPosition.Start" Value="@item.Listed" 
-            ValueChanged="@(l => ListedChanged(l, item))" Class="py-0 px-2" Size="Size.Large" Dense="true" 
-            Color="Color.Dark" CheckedIcon="@Icons.Material.Outlined.CheckBox" />
-    </MudPaper>
+    <SwipeArea OnSwipe="OnSwipe" Context="@item" >
+        <MudPaper Class="d-flex my-1 pa-2" Style="@($"color:{Colors.Shades.Black}; background:{Colors.LightBlue.Lighten5}")" @ondblclick="@(() => EditItem(item))">
+            <MudText Class="ps-2" Typo="Typo.subtitle1">@item.Label</MudText>
+        </MudPaper>
+    </SwipeArea>
 }
 
 <MudDivider Class="my-4" />
 
 @foreach (var item in UnlistedItems)
 {
-    <MudPaper Class="d-flex pa-0 my-1" Style="@($"color:{Colors.Shades.White}; background:{Colors.Grey.Darken2};")" @ondblclick="@(() => EditItem(item))" >
-        <MudCheckBox T="bool" Label="@item.Label" LabelPosition="LabelPosition.Start" Value="@item.Listed" 
-            ValueChanged="@(l => ListedChanged(l, item))" Class="py-0 px-2" Size="Size.Large" Dense="true"
-            Color="Color.Inherit" />
-    </MudPaper>
+    <SwipeArea OnSwipe="OnSwipe" Context="@item" >
+        <MudPaper Class="d-flex my-1 pa-2" Style="@($"color:{Colors.Shades.White}; background:{Colors.Grey.Darken2};")" @ondblclick="@(() => EditItem(item))">
+            <MudText Class="ps-2" Typo="Typo.subtitle1">@item.Label</MudText>
+        </MudPaper>
+    </SwipeArea>
 }
 
 @code {
@@ -66,11 +63,15 @@
         UnlistedItems = (await ItemRepo.GetUnlistedItems()).ToList();
     }
 
-    async Task ListedChanged(bool listed, Item item)
+    async void OnSwipe(SwipeDirection swipeDirection, Item item)
     {
-        item.Listed = listed;
-        await ItemRepo.UpdateItem(item);
-        await LoadLists();
+        if (swipeDirection == SwipeDirection.LeftToRight || swipeDirection == SwipeDirection.RightToLeft)
+        {
+            item.Listed = !item.Listed;
+            await ItemRepo.UpdateItem(item);
+            await LoadLists();
+            StateHasChanged();
+        }
     }
 
     async Task CreateItem()
@@ -92,10 +93,8 @@
 
     async Task EditItem(Item item)
     {
-        var options = new DialogOptions { Position = DialogPosition.Custom };
-        var dialog = DialogService.Show<ItemDialog>("", new DialogParameters<ItemDialog> { { x => x.SavedItemId, item.ItemId } }, options);
+        var dialog = DialogService.Show<ItemDialog>("", new DialogParameters<ItemDialog> { { x => x.SavedItemId, item.ItemId } }, new DialogOptions { Position = DialogPosition.Custom } );
         var result = await dialog.Result;
         if (!result.Canceled) await LoadLists();
     }
-
 }
