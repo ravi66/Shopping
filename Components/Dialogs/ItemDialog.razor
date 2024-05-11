@@ -13,17 +13,17 @@
         <MudForm Model="@Item" @ref="@form" Validation="@(validator.ValidateValue)" ValidationDelay="0">
             <MudGrid Class="mb-2">
                 <MudItem xs="12">
-                    <MudTextField Label="Item Name" @bind-Value=Item.Name For="@(() => Item.Name)" Margin="Margin.Dense" Required="true" MaxLength="25" Class="pa-0" />
+                    <MudTextField Label="@Localizer["ItemName"]" @bind-Value=Item.Name For="@(() => Item.Name)" Margin="Margin.Dense" Required="true" MaxLength="25" Class="pa-0" />
                 </MudItem>
                 <MudItem xs="6">
-                    <MudNumericField Label="Quantity" @bind-Value=Item.Quantity For="@(() => Item.Quantity)" Margin="Margin.Dense" Class="pa-0" Min="1" />
+                    <MudNumericField Label="@Localizer["Quantity"]" @bind-Value=Item.Quantity For="@(() => Item.Quantity)" Margin="Margin.Dense" Class="pa-0" Min="1" />
                 </MudItem>
                 <MudItem xs="11" Class="pa-0">
-                    <MudSelect T="int" Label="Aisle" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter"
+                    <MudSelect T="int" Label="@Localizer["Aisle"]" Variant="Variant.Text" AnchorOrigin="Origin.BottomCenter"
                                @bind-Value=Item.AisleId Dense="true" Margin="Margin.Dense" Class="ps-3">
-                        @foreach (Aisle ailse in Aisles)
+                        @foreach (Aisle aisle in Aisles)
                         {
-                            <MudSelectItem Value="@(ailse.AisleId)">@ailse.AisleName</MudSelectItem>
+                            <MudSelectItem Value="@(aisle.AisleId)">@aisle.AisleName</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
@@ -31,13 +31,13 @@
         </MudForm>
         <MudGrid>
             <MudItem xs="4">
-                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Cancel">Cancel</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Cancel">@Localizer["Cancel"]</MudButton>
             </MudItem>
             <MudItem xs="4">
-                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(async () => await Save())">Save</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(async () => await Save())">@Localizer["Save"]</MudButton>
             </MudItem>
             <MudItem xs="4">
-                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(async () => await Delete())">Delete</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(async () => await Delete())">@Localizer["Delete"]</MudButton>
             </MudItem>
         </MudGrid>
     </DialogContent>

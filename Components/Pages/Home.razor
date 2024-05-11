@@ -4,7 +4,7 @@
 
 <MudForm Model="@NewItem" @ref="@NewItemForm" Validation="@(validator.ValidateValue)" ValidationDelay="0">
     <MudPaper Elevation="5" Class="mt-2" >
-        <MudTextField Variant="Variant.Outlined" Label="New Item" @bind-Value=NewItem.Name For="@(() => NewItem.Name)" 
+        <MudTextField Variant="Variant.Outlined" Label="@Localizer["NewItem"]" @bind-Value=NewItem.Name For="@(() => NewItem.Name)" 
             MaxLength="25" Class="pa-0 mt-0 mb-2" OnlyValidateIfDirty="true" Adornment="Adornment.End" 
             AdornmentIcon="@Icons.Material.Filled.Check" OnAdornmentClick="CreateItem"
             AdornmentColor="@Color.Primary" @ref="@NewItemField" Margin="Margin.Dense" />
@@ -20,16 +20,16 @@
     </SwipeArea>
 }
 
-<MudDivider Class="my-4" />
-
-@foreach (var item in UnlistedItems)
-{
-    <SwipeArea OnSwipe="OnSwipe" Context="@item" >
-        <MudPaper Class="d-flex my-1 pa-2" Style="@($"color:{Colors.Shades.White}; background:{Colors.Grey.Darken2};")" @ondblclick="@(() => EditItem(item))">
-            <MudText Class="ps-2" Typo="Typo.subtitle1">@item.Label</MudText>
-        </MudPaper>
-    </SwipeArea>
-}
+<MudExpansionPanel Class="mt-4 mb-2 mx-0 pa-0" Text="@Localizer["UnlistedItems", UnlistedItems.Count]" >
+    @foreach (var item in UnlistedItems)
+    {
+        <SwipeArea OnSwipe="OnSwipe" Context="@item" >
+            <MudPaper Class="d-flex my-1 pa-2" Style="@($"color:{Colors.Shades.White}; background:{Colors.Grey.Darken2};")" @ondblclick="@(() => EditItem(item))">
+                <MudText Class="ps-2" Typo="Typo.subtitle1">@item.Label</MudText>
+            </MudPaper>
+        </SwipeArea>
+    }
+</MudExpansionPanel>
 
 @code {
 

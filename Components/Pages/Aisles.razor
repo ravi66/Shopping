@@ -3,20 +3,20 @@
 <MudPaper Elevation="5" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten4};")" Class="my-2">
     <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Row="true" >
         <MudIcon Icon="@Icons.Material.Filled.LocalGroceryStore" Color="Color.Inherit" />
-        <MudText Typo="Typo.h5" Align="Align.Center">Aisles</MudText>
+        <MudText Typo="Typo.h5" Align="Align.Center">@Localizer["Aisles"]</MudText>
     </MudStack>
 </MudPaper>
 
 <SortableList Id="sortable1" Items="AisleList" OnUpdate="@SortList" Context="aisle" Handle=".drag-handle">
     <SortableItemTemplate>
         <div>
-            <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten5};")" Class="my-2">
+            <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten5};")" Class="my-2 drag-handle">
                 <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Row="true" >
-                    <MudIcon Icon="@Icons.Material.Filled.DragIndicator" Class="drag-handle" Color="Color.Dark" Size="Size.Large"/>
-                    <MudText Typo="Typo.subtitle1" >@aisle.AisleName</MudText>
-                    <MudSpacer />
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Text" @onpointerdown="@(() => Delete(aisle))" Class="me-4" />
-                </MudStack>
+                    <MudText Class="d-flex flex-grow-1" Typo="Typo.subtitle1">@aisle.AisleName</MudText>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                       Variant="Variant.Text" @onpointerdown="@(() => Delete(aisle))"
+                                       Class="me-4" />
+                </MudStack> 
             </MudPaper>
         </div>
     </SortableItemTemplate>
@@ -69,7 +69,7 @@
 
     private async Task Edit(Aisle aisle)
     {
-        string aisleName = await MauiDialogSvc.EditAisle("Edit Aisle", aisle.AisleName);
+        string aisleName = await MauiDialogSvc.EditAisle(Localizer["EditAisle"], aisle.AisleName);
         if (string.IsNullOrEmpty(aisleName) || aisle.AisleName.ToLower() == aisleName.ToLower()) return;
         if (!(await AisleNameUnique(aisleName))) return;
 
@@ -85,7 +85,7 @@
         aisleNames.Add(aisleName.ToLower());
         if (aisleNames.Count() != aisleNames.Distinct().Count())
         {
-            await MauiDialogSvc.Alert("Aisle exists");
+            await MauiDialogSvc.Alert(Localizer["AisleExists"]);
             return false;
         }
 
@@ -94,7 +94,7 @@
 
     private async Task Delete(Aisle aisle)
     {
-        if (await MauiDialogSvc.Confirm($"Delete \"{aisle.AisleName}\"?", null, "Yes", "No"))
+        if (await MauiDialogSvc.Confirm(Localizer["DeleteAisle", aisle.AisleName], null, Localizer["Yes"], Localizer["No"]))
         {
             await ItemRepo.UnsetAisle(aisle.AisleId);
             await AisleRepo.DeleteAisle(aisle.AisleId);
@@ -105,7 +105,7 @@
 
     private async Task NewAisle()
     {
-        string aisleName = await MauiDialogSvc.EditAisle("New Aisle", null);
+        string aisleName = await MauiDialogSvc.EditAisle(Localizer["NewAisle"], null);
         if (string.IsNullOrEmpty(aisleName)) return;
         if (!(await AisleNameUnique(aisleName))) return;
 

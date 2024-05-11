@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
+@using Microsoft.Extensions.Localization
 @using MudBlazor
 @using Shopping
 @using Shopping.Components
@@ -12,3 +13,5 @@
 @using Shopping.Data.Entities
 @using Shopping.Data.Repos
 @using Shopping.Services
+
+@inject IStringLocalizer<ShoppingResources.ShoppingResources> Localizer

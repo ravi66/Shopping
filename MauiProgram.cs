@@ -19,6 +19,8 @@ namespace Shopping
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddLocalization();
+
             builder.Services.AddMudServices();
 
             builder.Services.AddDbContextFactory<ShoppingDbContext>();
