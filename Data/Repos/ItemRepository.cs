@@ -14,9 +14,10 @@ namespace Shopping.Data.Repos
                 .Select(i => new Item
                 {
                     ItemId = i.ItemId,
-                    AisleId =i.AisleId,
+                    AisleId = i.AisleId,
                     Listed = i.Listed,
                     Name = i.Name,
+                    Quantity = i.Quantity,
                     Label = i.Quantity > 1 ? $"{i.Name} ({i.Quantity})" : i.Name,
                     Order = i.Aisle.Order,
                 })
@@ -34,9 +35,10 @@ namespace Shopping.Data.Repos
                 .Select(i => new Item
                 {
                     ItemId = i.ItemId,
-                    AisleId =i.AisleId,
+                    AisleId = i.AisleId,
                     Name = i.Name,
                     Listed = i.Listed,
+                    Quantity = i.Quantity,
                     Label = i.Quantity > 1 ? $"{i.Name} ({i.Quantity})" : i.Name,
                 })
                 .OrderBy(i => i.Name)
