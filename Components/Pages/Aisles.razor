@@ -10,9 +10,10 @@
 <SortableList Id="sortable1" Items="AisleList" OnUpdate="@SortList" Context="aisle" Handle=".drag-handle" >
     <SortableItemTemplate>
         <div>
-            <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten5};")" Class="my-2 me-8 ms-2 drag-handle">
+            <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten5};")" Class="my-2 mx-2">
                 <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Row="true" >
-                    <MudText Class="d-flex flex-grow-1 ps-2 py-1" Typo="Typo.subtitle1">@aisle.AisleName</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.DragHandle" Size="Size.Large" Class="drag-handle ms-2" />
+                    <MudText Class="d-flex flex-grow-1 px-0 py-1" Typo="Typo.subtitle1">@aisle.AisleName</MudText>
                     <MudIconButton @onpointerdown="@(() => Delete(aisle))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="py-1" />
                 </MudStack>
             </MudPaper>
