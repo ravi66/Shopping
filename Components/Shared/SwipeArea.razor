@@ -45,7 +45,7 @@
         var xDiff = _xDown.Value - args.ChangedTouches[0].ClientX;
         var yDiff = _yDown.Value - args.ChangedTouches[0].ClientY;
 
-        if (Math.Abs(xDiff) < 100 && Math.Abs(yDiff) < 100)
+        if (Math.Abs(xDiff) < 50 && Math.Abs(yDiff) < 50)
         {
             _xDown = null;
             _yDown = null;

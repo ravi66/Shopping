@@ -12,7 +12,7 @@
         <div>
             <MudPaper Elevation="5" @ondblclick="@(() => Edit(aisle))" Style="@($"color:{Colors.Shades.Black}; background:{Colors.Teal.Lighten5};")" Class="my-2 mx-2">
                 <MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Center" Row="true" >
-                    <MudIcon Icon="@Icons.Material.Filled.DragHandle" Size="Size.Large" Class="drag-handle ms-2" />
+                    <MudIcon Icon="@Icons.Material.Filled.DragHandle" Size="Size.Large" Class="drag-handle" />
                     <MudText Class="d-flex flex-grow-1 px-0 py-1" Typo="Typo.subtitle1">@aisle.AisleName</MudText>
                     <MudIconButton @onpointerdown="@(() => Delete(aisle))" Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="py-1" />
                 </MudStack>
@@ -21,7 +21,7 @@
     </SortableItemTemplate>
 </SortableList>
 
-<MudFab StartIcon="@Icons.Material.Filled.Add" OnClick="NewAisle" Color="Color.Success" Size="Size.Small" Class="absolute z-10 " Style="right:46%; bottom:-30px;" />
+<MudFab StartIcon="@Icons.Material.Filled.Add" OnClick="NewAisle" Color="Color.Success" Size="Size.Small" Class="fixed z-10 " Style="right:20%; bottom:20px;" />
 
 @code
 {
