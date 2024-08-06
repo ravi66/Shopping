@@ -15,10 +15,10 @@ namespace Shopping.Data.Entities
 
         public int Quantity { get; set; } = 1;
 
-        public Aisle Aisle { get; set; }
+        public Aisle Aisle { get; set; } = default!;
 
         [NotMapped]
-        public string Label { get; set; }
+        public string Label { get; set; } = string.Empty;
 
         [NotMapped]
         public int Order { get; set; }

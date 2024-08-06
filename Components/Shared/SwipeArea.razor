@@ -12,19 +12,19 @@
     private double? _yDown;
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment ChildContent { get; set; } = default!;
 
     [Parameter]
-    public TItem Context { get; set; }
+    public TItem Context { get; set; } = default!;
 
     [Parameter]
-    public Action<SwipeDirection, TItem> OnSwipe { get; set; }
+    public Action<SwipeDirection, TItem> OnSwipe { get; set; } = default!;
 
     [Parameter]
-    public string Class { get; set; }
+    public string Class { get; set; } = default!;
 
     [Parameter]
-    public string Style { get; set; }
+    public string Style { get; set; } = default!;
 
     [Parameter]
     public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();

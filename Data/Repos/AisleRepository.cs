@@ -28,7 +28,7 @@ namespace Shopping.Data.Repos
             return dbContext.Aisles.FirstOrDefault(a => a.AisleId == aisleId);
         }
 
-        public async Task<Aisle> AddAisle(Aisle aisle)
+        public async Task<Aisle?> AddAisle(Aisle aisle)
         {
             using var dbContext = await db.CreateDbContextAsync();
             var addedEntity = dbContext.Aisles.Add(aisle);

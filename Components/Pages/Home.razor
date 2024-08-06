@@ -32,12 +32,11 @@
 </MudExpansionPanel>
 
 @code {
+    [Inject] internal DbUtils DbUtils { get; set; } = default!;
 
-    [Inject] internal DbUtils DbUtils { get; set; }
+    [Inject] internal IItemRepository ItemRepo { get; set; } = default!;
 
-    [Inject] internal IItemRepository ItemRepo { get; set; }
-
-    [Inject] public IDialogService DialogService { get; set; }
+    [Inject] public IDialogService DialogService { get; set; } = default!;
 
     private List<Item> ListedItems { get; set; } = [];
 
@@ -45,11 +44,11 @@
 
     private Item NewItem = new();
 
-    private MudForm NewItemForm;
+    private MudForm NewItemForm = default!;
 
     private readonly ItemValidator validator = new();
 
-    private MudTextField<string> NewItemField;
+    private MudTextField<string> NewItemField = default!;
 
     protected async override Task OnInitializedAsync()
     {

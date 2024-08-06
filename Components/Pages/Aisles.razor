@@ -25,11 +25,11 @@
 
 @code
 {
-    [Inject] internal IAisleRepository AisleRepo { get; set; }
+    [Inject] internal IAisleRepository AisleRepo { get; set; } = default!;
 
-    [Inject] internal IItemRepository ItemRepo { get; set; }
+    [Inject] internal IItemRepository ItemRepo { get; set; } = default!;
 
-    [Inject] internal IMauiDialogSvc MauiDialogSvc { get; set; }
+    [Inject] internal IMauiDialogSvc MauiDialogSvc { get; set; } = default!;
 
     public List<Aisle> AisleList { get; set; } = new();
 

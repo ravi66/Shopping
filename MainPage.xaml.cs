@@ -31,7 +31,7 @@ namespace Shopping
 
         protected override bool OnBackButtonPressed()
         {
-            Application.Current.Quit();
+            Application.Current?.Quit();
             return true;
         }
     }

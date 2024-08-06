@@ -44,19 +44,19 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
 
     [Parameter] public int SavedItemId { get; set; }
 
-    [Inject] internal IItemRepository ItemRepo { get; set; }
+    [Inject] internal IItemRepository ItemRepo { get; set; } = default!;
 
-    [Inject] internal IAisleRepository AisleRepo { get; set; }
+    [Inject] internal IAisleRepository AisleRepo { get; set; } = default!;
 
     private Item Item { get; set; } = new();
 
     private readonly ItemValidator validator = new();
 
-    private MudForm form;
+    private MudForm form = default!;
 
     private List<Aisle> Aisles { get; set; } = [];
 
@@ -68,7 +68,7 @@
         MudDialog.SetOptions(MudDialog.Options);
 
         Aisles = (await AisleRepo.GetAisles()).ToList();
-        Item = await ItemRepo.GetItem(SavedItemId);
+        Item = await ItemRepo.GetItem(SavedItemId) ?? new();
     }
 
     private async Task Save()

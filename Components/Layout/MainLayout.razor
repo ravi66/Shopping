@@ -21,7 +21,7 @@
 
 @code
 {
-    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; } = default!;
 
     private bool _isDarkMode = false;
     private string themeIcon = Icons.Material.Filled.DarkMode;
