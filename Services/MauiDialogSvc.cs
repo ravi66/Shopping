@@ -16,7 +16,7 @@
         public async Task<string> EditAisle(string title, string? aisleName)
         {
             if (Application.Current != null && Application.Current.MainPage != null) return await Application.Current.MainPage.DisplayPromptAsync(title, null, "Ok", "Cancel", "Aisle", 25, null, aisleName);
-            return string.Empty;
+            return aisleName ?? string.Empty;
         }
     }
 }
